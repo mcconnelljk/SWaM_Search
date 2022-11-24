@@ -1,6 +1,5 @@
-import os
-
-clear = lambda: os.system('clear')
+import logic
+import features
 
 def pixify(msg):
     pixie_dust = '\n ~ * ~ * ~ * ~ \n'
@@ -8,7 +7,7 @@ def pixify(msg):
     return(message)
 
 def welcome():
-    clear()
+    logic.globals.clear_console()
     welcome_msg = '\n WELCOME TO SWAM SEARCH\n'
     return(print(pixify(welcome_msg)))
 
@@ -32,9 +31,7 @@ def print_main_menu():
     elif visitor_type == 'C':
         goodbye()
     else:
-        clear()
-        msg = '\n Invalid entry selected\n'
-        print(pixify(msg))
+        logic.errors.invalid_selection()
         print_main_menu()
     return
 
@@ -45,7 +42,7 @@ def vendor_menu():
     return
 
 def if_vendor_menu():
-    clear()
+    logic.globals.clear_console()
     description = '\n With this tool, SWaM-registered vendors can see recommendations for additional products to sell.\n'
     print(description)
     vendor_key = vendor_menu()
@@ -61,19 +58,23 @@ def buyer_menu():
 
 def product_code_menu():
     message = '\n Please select: \n'
-    options = '\n [A] - I have a product code (NIGP key) \n'
+    options = '\n [A] - Enter product code (NIGP key) \n[B] - Lookup product code \n\n[C] - Back to Main Menu \n'
     print(message + options)
     product_code = input('\nSelection: ')
     return product_code
 
 def if_buyer_menu():
-    clear()
+    logic.globals.clear_console()
     description = '\n With this tool, buyers can see (and filter) which registered vendors have a particular product\n'
     print(description)
     #agency_key = buyer_menu()
     product_code = product_code_menu().upper()
     if product_code == 'A':
         print(pixify('\n That\'s cool, kid\n'))
+    elif product_code == 'B':
+        print(pixify('\n That\'s also cool, kid-a-roo\n'))
+    elif product_code == 'C':
+        main_menu()
     else:
         msg = '\n Invalid entry selected\n'
         print(pixify(msg))
