@@ -11,7 +11,6 @@ def get_vendor_orders(conn, vendor_key):
     return(products_dict)
 
 
-
 '''
 
 #create client-side cursor
