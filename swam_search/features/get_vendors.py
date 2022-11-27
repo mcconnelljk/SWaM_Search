@@ -36,3 +36,4 @@ products_list = list(products_dict.values())
 
 #close the cursor
 cursor.close()
+'''

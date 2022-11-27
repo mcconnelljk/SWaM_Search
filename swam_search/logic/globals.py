@@ -1,5 +1,10 @@
 import os
 
+def pixify(heading):
+    pixie_dust = '\n ~ * ~ * ~ * ~ \n'
+    message = pixie_dust + heading.upper() + pixie_dust
+    return(message)
+
 def clear_console():
     os.system('clear')
 
