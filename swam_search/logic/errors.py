@@ -1,6 +1,6 @@
 from logic import globals
 
-def invalid_selection():
+def invalid_entry():
     globals.clear_console()
-    msg = '\n Invalid entry selected\n'
+    msg = '\n Invalid entry...\n'
     return(print(pixify(msg)))
