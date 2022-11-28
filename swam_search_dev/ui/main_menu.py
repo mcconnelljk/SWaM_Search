@@ -1,12 +1,11 @@
 import ui
 import logic
-import features
 from data import connect
 
 
 def welcome(conn):
     logic.globals.clear_console()
-    heading = '\n welcome to Swam Search\n'
+    heading = '\n Welcome to Swam Search\n'
     print(logic.globals.pixify(heading))
     connect.test_connection(conn)
     return
@@ -39,4 +38,3 @@ def print_main_menu(conn):
         logic.errors.invalid_entry()
         print_main_menu(conn)
     return
-
