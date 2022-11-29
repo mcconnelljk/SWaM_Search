@@ -9,21 +9,24 @@ def get_vendors_table():
 
 
 def get_associations_per_order(nigp_key):
+    nigp_key = '%'+str(nigp_key)+'%'
     query = '''
         SELECT antecedents, consequents, confidence, lift
         FROM apriori_products_per_order as apriori
-        where apriori.antecedents like '%{}%'
+        where apriori.antecedents like '{}'
         ;'''.format(nigp_key)
-    return
+    return(query)
 
 
 def get_associations_per_agency(nigp_key):
+    nigp_key = '%'+str(nigp_key)+'%'
     query = '''
         SELECT antecedents, consequents, confidence, lift
         FROM apriori_products_per_agency as apriori
-        where apriori.antecedents like '%{}%'
+        where apriori.antecedents like '{}'
         ;'''.format(nigp_key)
-    return
+    return(query)
+
 
 def get_vendor_products_and_customers(vendor_key):
     query = '''    

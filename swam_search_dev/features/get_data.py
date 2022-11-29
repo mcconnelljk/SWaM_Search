@@ -9,6 +9,7 @@ import nltk
 
 #query the database and return a dataframe of key, value pairs
 def get_products_df(conn):
+    print('\n Loading data...\n')
     query = queries.get_products_table()
     cursor = conn.cursor()
     cursor.execute(query)
@@ -20,21 +21,24 @@ def get_products_df(conn):
         nigp_desc = r[2]
         temp_list = [nigp_key, nigp_code, nigp_desc]
         my_df.loc[len(my_df)] = temp_list
+    print('\n ...Data loaded!\n\n')
     cursor.close()
     return(my_df)
 
 #query the database and print results to console
 def get_vendors_report(conn, query):
+    print('\n Query running...\n\n')
     cursor = conn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
+    rows_list = []
     for r in rows:
-        print (r)
+        rows_list.append(r[0])
     cursor.close()
-    return
+    return (rows_list)
 
 #query the database and return a list of unique products and a list of unique customers
-def get_products_customers_lists(conn):
+def get_products_customers_lists(conn, vendor_key):
     query = queries.get_vendor_products_and_customers(vendor_key)
     cursor = conn.cursor()
     cursor.execute(query)
@@ -45,7 +49,7 @@ def get_products_customers_lists(conn):
     return(products_dict, customers_dict)
 
 def get_vendors_list(conn):
-    query = get_vendors_table()
+    query = queries.get_vendors_table()
     cursor = conn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()

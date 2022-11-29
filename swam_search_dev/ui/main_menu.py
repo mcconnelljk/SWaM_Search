@@ -28,7 +28,7 @@ def print_main_menu(conn, products_df):
     visitor_type = main_menu().upper()
     if visitor_type == 'A':
         ui.vendor_menu.welcome()
-        ui.vendor_menu.if_vendor(conn)
+        ui.vendor_menu.if_vendor(conn, products_df)
     elif visitor_type == 'B':
         ui.buyer_menu.welcome(conn)
         ui.buyer_menu.if_buyer(conn, products_df)

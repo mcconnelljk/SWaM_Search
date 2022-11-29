@@ -28,7 +28,7 @@ def load_states():
                     'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 
                     'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 
                     'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY']
-    return(states)
+    return(states_list)
 
 def return_dict(rows, key_col_num, val_col_num):
     my_dict = {}
