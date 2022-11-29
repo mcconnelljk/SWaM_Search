@@ -24,17 +24,17 @@ def main_menu():
     selection = input('\n Selection: ')
     return(selection)
 
-def print_main_menu(conn):
+def print_main_menu(conn, products_df):
     visitor_type = main_menu().upper()
     if visitor_type == 'A':
         ui.vendor_menu.welcome()
         ui.vendor_menu.if_vendor(conn)
     elif visitor_type == 'B':
         ui.buyer_menu.welcome(conn)
-        ui.buyer_menu.if_buyer(conn)
+        ui.buyer_menu.if_buyer(conn, products_df)
     elif visitor_type == 'C':
         goodbye(conn)
     else:
         logic.errors.invalid_entry()
-        print_main_menu(conn)
+        print_main_menu(conn, products_df)
     return

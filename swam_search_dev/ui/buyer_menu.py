@@ -1,10 +1,10 @@
-import ui
+from ui import main_menu
+import data.queries as queries
 import logic
 import features
 
 def welcome(conn):
     logic.globals.clear_console()
-    product_dict = features.get_data.get_products(conn)
     heading = '\n Buyer Menu\n'
     description = '\n With this tool, buyers can see (and filter) which registered vendors have a particular product.\n'
     print(description)
@@ -17,7 +17,7 @@ def print_product_menu():
     selection = input('\n Selection: ')
     return(selection)
 
-def print_states_menu(conn, selection, product_code):
+def print_states_menu(conn, selection, product_code, products_df):
     instructions = '\n Filter vendors by entering a 2-letter state abbreviation: \n'
     state_input = input('\n State Abbrev: ')
     if len(state_input) == 2:
@@ -26,52 +26,62 @@ def print_states_menu(conn, selection, product_code):
             return (state_input)
         else:
             logic.errors.invalid_entry()
-            if_local_filter(conn, selection, product_code)
+            if_local_filter(conn, selection, product_code, products_df)
             return
     
-def if_local_filter(conn, selection, product_code):
-    state_abbr = print_states_menu(conn, selection, product_code)
+def if_local_filter(conn, selection, product_code, products_df):
+    state_abbr = print_states_menu(conn, selection, product_code, products_df)
     if selection == 'A':
-        query = data.queries.vendors_are_local(product_code, state_abbr)
+        query = queries.vendors_are_local(product_code, state_abbr)
         report = features.get_data.get_vendors_report(conn, query)
         #format report
         print(report)
-        if_buyer(conn)
+        if_enter_product(conn, product_code, products_df)
     elif selection == 'C':
-        query = data.queries.vendors_local_and_set_aside(product_code, state_abbr)
+        query = queries.vendors_local_and_set_aside(product_code, state_abbr)
         report = features.get_data.get_vendors_report(conn, query)
         #format report
         print(report)
-        if_buyer(conn)
+        if_enter_product(conn, product_code, products_df)
     return
 
-def if_enter_product(conn, product_code):
+def if_enter_product(conn, product_code, products_df):
     selection = print_product_menu().upper()
     if selection == 'A' or selection == 'C':
-        if_local_filter(conn, selection, product_code)
+        if_local_filter(conn, selection, product_code, products_df)
     elif selection == 'B':
         query = data.queries.vendors_have_set_asides(product_code)
         report = features.get_data.get_vendors_report(conn, query)
         #format report
         print(report)
-        if_buyer(conn)
+        if_enter_product(conn, product_code, products_df)
     elif selection == 'D':
-        query = data.queries.all_vendors(product_code)
+        query = data.queries.vendors_no_filter(product_code)
         report = features.get_data.get_vendors_report(conn, query)
         #format report
         print(report)
-        if_buyer(conn)
+        if_enter_product(conn, product_code, products_df)
     elif selection == 'E':
-        if_buyer(conn)
+        del(product_code)
+        if_buyer(conn, products_df)
     else:
         logic.errors.invalid_entry()
-        if_enter_product(conn)
+        if_enter_product(conn, product_code, products_df)
     return
 
-def set_product_code():
+def set_product_code(conn, products_df):
+    product_code_list = products_df['NIGP_CODE']
     instructions = '\n To see available vendors, enter a 5-digit product code \n'
     product_code = input('\n NIGP Code: ')
-    return(product_code)
+    is_valid = product_code in product_code_list
+    del(product_code_list)
+    if is_valid:
+        return(product_code)
+    elif len(product_code) == 0:
+        if_buyer(conn, products_df)
+    else:
+        logic.error.invalid_entry()
+        set_product_code(conn, products_df)
 
 def define_query():
     logic.globals.clear_console()
@@ -81,31 +91,31 @@ def define_query():
     query = input('\n Search phrase: ')
     return (query)
 
-def print_query_matches(conn, query):
-    products_dict = features.get_data.get_products(conn)
+def print_query_matches(conn, query, products_df):
+    products_dict = dict(zip(products_df.NIGP_CODE, products_df.NIGP_DESC))
     list_of_ranks = features.query_products.get_query_results(query, products_dict)
     if len(list_of_ranks) > 0:
         results_str = features.query_products.format_results(list_of_ranks, products_dict)
         heading = '\n RESULTS\n'
         print(logic.globals.pixify(heading))
         print(results_str + '\n')
-        if_buyer(conn)
+        if_buyer(conn, products_df)
     else:
         message = '\n No results found :(\n'
         print(message)
-        if_buyer(conn)
+        if_buyer(conn, products_df)
     return
 
-def if_product_search(conn):
+def if_product_search(conn, products_df):
     query = define_query()
     if len(query) > 2:
-        print_query_matches(conn, query)
-        if_buyer(conn)
+        print_query_matches(conn, query, products_df)
+        if_buyer(conn, products_df)
     elif len(query) == 0:
-        if_buyer(conn)
+        if_buyer(conn, products_df)
     else:
         logic.errors.invalid_entry()
-        if_buyer(conn)
+        if_buyer(conn, products_df)
     return
 
 def product_code_menu():
@@ -115,16 +125,16 @@ def product_code_menu():
     product_code = input('\n Selection: ')
     return product_code
 
-def if_buyer(conn):
-    product_code = product_code_menu().upper()
-    if product_code == 'A':
-        product_code = set_product_code()
-        if_enter_product(conn, product_code)
-    elif product_code == 'B':
-        if_product_search(conn)
-    elif product_code == 'C':
-        ui.main_menu.print_main_menu(conn)
+def if_buyer(conn, products_df):
+    selection = product_code_menu().upper()
+    if selection == 'A':
+        product_code = set_product_code(conn, products_df)
+        if_enter_product(conn, product_code, products_df)
+    elif selection == 'B':
+        if_product_search(conn, products_df)
+    elif selection == 'C':
+        main_menu.print_main_menu(conn, products_df)
     else:
         logic.errors.invalid_entry()
-        if_buyer()
+        if_buyer(conn, products_df)
     return

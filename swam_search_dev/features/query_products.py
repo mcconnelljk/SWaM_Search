@@ -85,7 +85,6 @@ def get_query_results(query, products_dict):
     list_of_ranks = list_matches(products_list, ranks)
     end_time = time.perf_counter()
     total_time = globals.print_total_time_seconds(start_time, end_time)
-    #total_time = print_total_time_seconds(start_time, end_time)
     print('\n Query complete in {}\n'.format(total_time))
     return(list_of_ranks)
 

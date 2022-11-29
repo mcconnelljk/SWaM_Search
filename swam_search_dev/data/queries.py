@@ -1,9 +1,36 @@
+def get_products_table():
+    query = "SELECT nigp_key, nigp_code, nigp_desc FROM raw_products;"
+    return(query)
+
+
+def get_vendors_table():
+    query = "SELECT vendor_key FROM raw_vendors;"
+    return(query)
+
+
+def get_associations_per_order(nigp_key):
+    query = '''
+        SELECT antecedents, consequents, confidence, lift
+        FROM apriori_products_per_order as apriori
+        where apriori.antecedents like '%{}%'
+        ;'''.format(nigp_key)
+    return
+
+
+def get_associations_per_agency(nigp_key):
+    query = '''
+        SELECT antecedents, consequents, confidence, lift
+        FROM apriori_products_per_agency as apriori
+        where apriori.antecedents like '%{}%'
+        ;'''.format(nigp_key)
+    return
+
 def get_vendor_products_and_customers(vendor_key):
     query = '''    
         SELECT DISTINCT
             orders.vendor_key
             ,vendors.vendor_name
-            ,products.nigp_code
+            ,products.nigp_key
             ,products.nigp_desc
             ,orders.agency_key
             ,agencies.entity_description
@@ -15,11 +42,6 @@ def get_vendor_products_and_customers(vendor_key):
         ORDER BY vendor_name asc
         ;'''.format(vendor_key)
     return (query)
-
-
-def get_products_table():
-    query = "SELECT nigp_code, nigp_desc FROM raw_products;"
-    return(query)
 
 
 def vendors_are_local(product_code, state_abbr):
@@ -99,7 +121,7 @@ def vendors_local_and_set_aside(product_code, state_abbr):
     return (query)
 
 
-def all_vendors(product_code):
+def vendors_no_filter(product_code):
     query = '''    
         SELECT DISTINCT 
             orders.vendor_key
