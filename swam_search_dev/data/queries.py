@@ -9,42 +9,45 @@ def get_vendors_table():
 
 
 def get_associations_per_order(nigp_key):
-    nigp_key = '%'+str(nigp_key)+'%'
+    nigp_key = '[' + str(nigp_key) + ']'
     query = '''
         SELECT antecedents, consequents, confidence, lift
-        FROM apriori_products_per_order as apriori
-        where apriori.antecedents like '{}'
+        FROM apriori_products_per_order AS apriori
+        WHERE apriori.antecedents LIKE '{}'
+        AND confidence >= 0.75
+        ORDER BY confidence DESC, lift DESC
+        LIMIT 15
         ;'''.format(nigp_key)
     return(query)
 
 
 def get_associations_per_agency(nigp_key):
-    nigp_key = '%'+str(nigp_key)+'%'
+    nigp_key = '[' + str(nigp_key) + ']'
     query = '''
         SELECT antecedents, consequents, confidence, lift
-        FROM apriori_products_per_agency as apriori
-        where apriori.antecedents like '{}'
+        FROM apriori_products_per_agency AS apriori
+        WHERE apriori.antecedents LIKE '{}'
+        AND confidence >= 0.75
+        ORDER BY confidence DESC, lift DESC
+        LIMIT 15
         ;'''.format(nigp_key)
     return(query)
 
 
-def get_vendor_products_and_customers(vendor_key):
+def get_vendor_products(vendor_key):
     query = '''    
         SELECT DISTINCT
             orders.vendor_key
             ,vendors.vendor_name
             ,products.nigp_key
             ,products.nigp_desc
-            ,orders.agency_key
-            ,agencies.entity_description
         FROM raw_orders AS orders
         INNER JOIN raw_vendors AS vendors ON orders.vendor_key = vendors.vendor_key
         INNER JOIN raw_products AS products ON orders.nigp_key = products.nigp_key
-        INNER JOIN raw_agencies AS agencies ON orders.agency_key = agencies.agency_key
         WHERE orders.vendor_key = '{}'
         ORDER BY vendor_name asc
         ;'''.format(vendor_key)
-    return (query)
+    return(query)
 
 
 def vendors_are_local(product_code, state_abbr):

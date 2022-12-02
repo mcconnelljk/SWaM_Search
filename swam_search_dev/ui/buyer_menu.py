@@ -1,16 +1,32 @@
+import pandas as pd
 from ui import main_menu
-import data.queries as queries
+from data import queries
 import logic
 import features
 
-def welcome(conn):
-    logic.globals.clear_console()
+def welcome():
     heading = '\n Buyer Menu\n'
     description = '\n With this tool, buyers can see (and filter) which registered vendors have a particular product.\n'
+    print(logic.globals.pixify(heading))
     print(description)
     return
 
+def print_results_heading():
+    heading = '\n RESULTS\n'
+    print(logic.globals.pixify(heading))
+    return
+
+def print_results(conn, query):
+    report_list = features.get_data.get_vendors_report(conn, query)
+    report_df = format_report(report_list)
+    logic.globals.print_results_heading()
+    print(report_df)
+    selection = input('\n Press any key to continue...\n')
+    return
+
 def print_product_menu():
+    heading = '\n Print Vendors Report\n'
+    print(logic.globals.pixify(heading))
     instructions = '\n Filter vendors by selecting an option: \n'
     options = '\n [A] - Vendor is a local business \n [B] - Vendor has set-aside(s) \n [C] - Both A and B \n [D] - None (i.e. print all vendors) \n\n [E] - Back \n'
     print(instructions + options)
@@ -28,43 +44,48 @@ def print_states_menu(conn, selection, product_code, products_df):
             logic.errors.invalid_entry()
             if_local_filter(conn, selection, product_code, products_df)
             return
-    
+
+def format_report(report_list):
+    my_df = pd.DataFrame(columns = ['VENDOR_KEY', 'VENDOR_NAME', 'VENDOR_LOCAION', 'HAS_SET_ASIDE'])
+    row = -1
+    for i in report_list:
+        row += 1
+        vendor_key = report_list[row][0]
+        vendor_name = report_list[row][1]
+        vendor_location = report_list[row][2]
+        if report_list[row][3] == None:
+            has_set_aside = False
+        else:
+            has_set_aside = True
+        temp_list = [vendor_key, vendor_name, vendor_location, has_set_aside]
+        my_df.loc[len(my_df)] = temp_list
+    return (my_df)
+
 def if_local_filter(conn, selection, product_code, products_df):
     state_abbr = print_states_menu(conn, selection, product_code, products_df)
     if selection == 'A':
         query = queries.vendors_are_local(product_code, state_abbr)
-        report_list = features.get_data.get_vendors_report(conn, query)
-        #format report
-        print(report_list)
-        del(state_abbr)
-        if_enter_product(conn, product_code, products_df)
+        print_results(conn, query)
     elif selection == 'C':
         query = queries.vendors_local_and_set_aside(product_code, state_abbr)
-        report_list = features.get_data.get_vendors_report(conn, query)
-        #format report
-        print(report_list)
-        del(state_abbr)
-        if_enter_product(conn, product_code, products_df)
+        print_results(conn, query)
     return
 
 def if_enter_product(conn, product_code, products_df):
     selection = print_product_menu().upper()
     if selection == 'A' or selection == 'C':
         if_local_filter(conn, selection, product_code, products_df)
+        if_enter_product(conn, product_code, products_df)
     elif selection == 'B':
         query = queries.vendors_have_set_asides(product_code)
-        report_list = features.get_data.get_vendors_report(conn, query)
-        #format report
-        print(report_list)
+        print_results(conn, query)
         if_enter_product(conn, product_code, products_df)
     elif selection == 'D':
         query = queries.vendors_no_filter(product_code)
-        report_list = features.get_data.get_vendors_report(conn, query)
-        #format report
-        print(report_list)
+        print_results(conn, query)
         if_enter_product(conn, product_code, products_df)
     elif selection == 'E':
-        del(product_code)
+        welcome()
         if_buyer(conn, products_df)
     else:
         logic.errors.invalid_entry()
@@ -73,12 +94,12 @@ def if_enter_product(conn, product_code, products_df):
 
 def set_product_code(conn, products_df):
     product_code_list = list(products_df['NIGP_CODE'])
-    instructions = '\n To see available vendors, enter a product code \n'
+    instructions = '\n Enter a product code, or press <<Return>> to go back\n'
+    print(instructions)
     product_code = input('\n NIGP Code: ')
     if len(product_code) > 0:
         if product_code.isdigit() == True:
             is_valid = product_code in product_code_list
-            del(product_code_list)
             if is_valid:
                 return(product_code)
         else:
@@ -88,10 +109,10 @@ def set_product_code(conn, products_df):
         if_buyer(conn, products_df)
 
 def define_query():
-    logic.globals.clear_console()
-    heading = '\n Product Code Search\n'
+    #heading = '\n Product Code Search\n'
+    #print(ogic.globals.pixify(heading))
     instructions = '\n Enter keyword phrase, or press <<Return>> to go back'
-    print(logic.globals.pixify(heading) + instructions)
+    print(instructions)
     query = input('\n Search phrase: ')
     return (query)
 

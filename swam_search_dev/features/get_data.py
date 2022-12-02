@@ -27,26 +27,24 @@ def get_products_df(conn):
 
 #query the database and print results to console
 def get_vendors_report(conn, query):
-    print('\n Query running...\n\n')
     cursor = conn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     rows_list = []
     for r in rows:
-        rows_list.append(r[0])
+        rows_list.append(r)
     cursor.close()
     return (rows_list)
 
 #query the database and return a list of unique products and a list of unique customers
-def get_products_customers_lists(conn, vendor_key):
-    query = queries.get_vendor_products_and_customers(vendor_key)
+def get_products_list(conn, vendor_key):
+    query = queries.get_vendor_products(vendor_key)
     cursor = conn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     products_dict = globals.return_dict(rows, 2, 3)
-    customers_dict = globals.return_dict(rows, 4, 5)
     cursor.close()
-    return(products_dict, customers_dict)
+    return(products_dict)
 
 def get_vendors_list(conn):
     query = queries.get_vendors_table()
