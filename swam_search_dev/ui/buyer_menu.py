@@ -25,8 +25,8 @@ def print_results(conn, query):
     return
 
 def print_product_menu():
-    heading = '\n Print Vendors Report\n'
-    print(logic.globals.pixify(heading))
+    #heading = '\n Print Vendors Report\n'
+    #print(logic.globals.pixify(heading))
     instructions = '\n Filter vendors by selecting an option: \n'
     options = '\n [A] - Vendor is a local business \n [B] - Vendor has set-aside(s) \n [C] - Both A and B \n [D] - None (i.e. print all vendors) \n\n [E] - Back \n'
     print(instructions + options)
@@ -94,7 +94,7 @@ def if_enter_product(conn, product_code, products_df):
 
 def set_product_code(conn, products_df):
     product_code_list = list(products_df['NIGP_CODE'])
-    instructions = '\n Enter a product code, or press <<Return>> to go back\n'
+    instructions = '\n\n Enter a product code, or press <<Return>> to go back\n'
     print(instructions)
     product_code = input('\n NIGP Code: ')
     if len(product_code) > 0:
@@ -111,7 +111,7 @@ def set_product_code(conn, products_df):
 def define_query():
     #heading = '\n Product Code Search\n'
     #print(ogic.globals.pixify(heading))
-    instructions = '\n Enter keyword phrase, or press <<Return>> to go back'
+    instructions = '\n Enter keyword phrase, or press <<Return>> to go back\n'
     print(instructions)
     query = input('\n Search phrase: ')
     return (query)
@@ -121,9 +121,8 @@ def print_query_matches(conn, query, products_df):
     list_of_ranks = features.query_products.get_query_results(query, products_dict)
     if len(list_of_ranks) > 0:
         results_str = features.query_products.format_results(list_of_ranks, products_dict)
-        heading = '\n RESULTS\n'
-        print(logic.globals.pixify(heading))
-        print(results_str + '\n')
+        print('\n' + results_str)
+        selection = input('\n Press any key to continue...\n')
         if_buyer(conn, products_df)
     else:
         message = '\n No results found :(\n'

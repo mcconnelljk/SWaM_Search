@@ -74,12 +74,12 @@ def get_results_list(conn, selection, products_list):
     print('\n Query running...\n\n')
     start_time = time.perf_counter()
     for nigp_key in products_list:
-        msg = '\n ...Retrieving for product \'{}\''.format(nigp_key)
-        print(msg)
         if selection == 'A':                
             query = queries.get_associations_per_order(nigp_key)
             temp_list = features.get_data.get_vendors_report(conn, query)
         elif selection == 'B':
+            #msg = '\n ...Retrieving for product \'{}\''.format(nigp_key)
+            #print(msg)
             query = queries.get_associations_per_agency(nigp_key)
             temp_list = features.get_data.get_vendors_report(conn, query)
         for row in temp_list:
@@ -100,7 +100,7 @@ def report_option_menu(conn, products_df, vendor_key, products_dict):
             selection = input('\n Press any key to continue...\n')
             report_option_menu(conn, products_df, vendor_key, products_dict)    
         else:
-            print('\n No recommendations found at this time :(')
+            print('\n\n No recommendations found at this time :(\n\n')
             selection = input('\n Press any key to continue...\n')
             report_option_menu(conn, products_df, vendor_key, products_dict)
     elif selection == 'C':
