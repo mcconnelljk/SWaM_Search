@@ -23,11 +23,11 @@ def get_connection():
 
 def test_connection(conn):
     if conn and conn.closed == 0:
-        print(" Connection to SWaM_DB established successfully.\n\n")
+        print(" Connection to SWaM_DB established successfully.\n")
     elif conn and conn.closed == 1:
         print(" Connection to SWaM_DB closed successfully.\n\n")
     else:
-        print(" Connection to SWaM_DB encountered an error...\n Please check your local configuration file for your environmental variables\n\n")
+        print(" Connection to SWaM_DB encountered an error...\n Please check your local configuration file for your environmental variables\n")
     return
 
 #test_connection(conn)

@@ -2,7 +2,7 @@
 #!pip3 install nltk
 #!pip3 install scikit-learn
 #!pip3 install pandas
-#!pip3 instal gensim
+#!pip3 install gensim
 
 import time
 import psycopg2
@@ -19,19 +19,10 @@ from gensim.similarities import MatrixSimilarity
 
 wnl = WordNetLemmatizer ()
 ps = PorterStemmer()
-
 stop_words = set(stopwords.words('english'))
 
 '''Take in a list of docs and output a pre-processed list of clean docs'''
 
-#for a given dictionary, create a list of docs
-'''
-def list_dict_values(dict):
-    values_list = list(dict.values())
-    return(values_list)
-
-#products_list = list_dict_values(products_dict)
-'''
 #preprocess string into clean string
 def preprocess_string(string):
     clean_string = ""
@@ -67,33 +58,7 @@ def list_tokens(list_of_strings):
         token_list = preprocess_tokens(tokens)
         list_of_tokens.append(token_list)
     return(list_of_tokens)
-'''
-product_tokens = list_tokens(products_list)
-term_dict = corpora.Dictionary(product_tokens)
-corpus_bow = [term_dict.doc2bow(doc, allow_update=True) for doc in product_tokens]
 
-#frequency of words per each document
-for doc in corpus_bow:
-   print([[term_dict[id], freq] for id, freq in doc])
-
-#train model on corpus
-tfidf = TfidfModel(corpus_bow, dictionary = term_dict)
-
-#frequency of words across corpus
-for doc in tfidf[corpus_bow]:
-   print([[term_dict[id], round(freq,2)] for id, freq in doc])
-
-query = "Peanut Butter"
-query_processed = preprocess_string(query)
-query_bow = term_dict.doc2bow(list(query_processed.split()))
-tfidf[query_bow]
-
-for x, y in tfidf[query_bow]:
-    print(list(term_dict.items())[x], round(y, 2))
-
-cosine_model = MatrixSimilarity(tfidf[corpus_bow])
-ranks = cosine_model[tfidf[query_bow]]
-'''
 def list_matches(list_of_strings, ranks):
     list_of_ranks = []
     count = -1
@@ -104,8 +69,7 @@ def list_matches(list_of_strings, ranks):
             list_of_ranks.append(my_tuple)
     return(list_of_ranks)
 
-#list_of_ranks = list_matches(products_list, ranks)
-
+#for a given query, get related-product recommendations
 def get_query_results(query, products_dict):
     start_time = time.perf_counter()
     print('\n Running query...')
@@ -121,12 +85,10 @@ def get_query_results(query, products_dict):
     list_of_ranks = list_matches(products_list, ranks)
     end_time = time.perf_counter()
     total_time = globals.print_total_time_seconds(start_time, end_time)
-    #total_time = print_total_time_seconds(start_time, end_time)
     print('\n Query complete in {}\n'.format(total_time))
     return(list_of_ranks)
 
-#list_of_ranks = get_query_results(query, products_dict)
-
+#format recommendations for console display
 def format_results(list_of_ranks, products_dict):
     print('\n Formatting...\n')
     columns = ['NIPG_CODE', 'NIGP_DESC', 'RANK']
@@ -144,5 +106,3 @@ def format_results(list_of_ranks, products_dict):
     df = df.drop('RANK', axis = 1)
     results_str = df.to_string(index=False)
     return(results_str)
-
-#results_str = format_results(list_of_ranks, products_dict)
