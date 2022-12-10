@@ -8,6 +8,7 @@ import time
 import psycopg2
 import nltk
 import pandas as pd
+import string
 from logic import globals
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -24,19 +25,21 @@ stop_words = set(stopwords.words('english'))
 '''Take in a list of docs and output a pre-processed list of clean docs'''
 
 #preprocess string into clean string
-def preprocess_string(string):
+def preprocess_string(sentence):
     clean_string = ""
-    total_words = len(string.split())
-    word_count = 0
-    for word in string.split():
+    total_words = len(sentence.split())
+    word_count = -1
+    punct_list = string.punctuation
+    no_punct = ''.join(c if c not in punct_list else ' ' for c in sentence)
+    for word in no_punct.split():
         word_count += 1
         if word.isalpha() and word not in stop_words:
-            lemmit_word = wnl.lemmatize(word)
-            stem_word = ps.stem(lemmit_word)
+            word = wnl.lemmatize(word)
+            word = ps.stem(word)
             if word_count < total_words:
-                clean_string += stem_word + " "
+                clean_string += word + " "
             else:
-                clean_string += stem_word
+                clean_string += word
     return(clean_string)
 
 '''from a list of docs, create a bag of words'''
@@ -53,8 +56,10 @@ def preprocess_tokens(tokens):
 
 def list_tokens(list_of_strings):
     list_of_tokens = []
-    for string in list_of_strings:
-        tokens = word_tokenize(string.lower())
+    punct_list = string.punctuation
+    for sentence in list_of_strings:
+        no_punct = ''.join(c if c not in punct_list else ' ' for c in sentence)
+        tokens = word_tokenize(no_punct.lower())
         token_list = preprocess_tokens(tokens)
         list_of_tokens.append(token_list)
     return(list_of_tokens)

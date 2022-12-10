@@ -37,8 +37,8 @@ def get_vendors_report(conn, query):
     return (rows_list)
 
 #query the database and return a list of unique products and a list of unique customers
-def get_products_list(conn, vendor_key):
-    query = queries.get_vendor_products(vendor_key)
+def get_products_list(conn, vendor_id):
+    query = queries.get_vendor_products(vendor_id)
     cursor = conn.cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
