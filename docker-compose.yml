@@ -8,7 +8,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - my_dbdata:/var/lib/postgresql/data
+      - ../../DockerDBs/swam_db_loc:/var/lib/postgresql/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
 volumes:
