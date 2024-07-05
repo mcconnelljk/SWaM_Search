@@ -14,9 +14,42 @@ To set up the database within a docker container, run the following command
 docker-compose up -d db-loc
 ```
 
-### 2 - Load Data into database ###
+### 2 - Create a virtual environment within the SWaM_Search parent directory ###
 
-### 3 - Create a virtual environment within the SWaM_Search parent directory ###
+Using ['venv'](https://docs.python.org/3/library/venv.html) or some other such package running on your host machine, create a virtual environment for this project.
 
-### 4 - Run 'setup.py' to load packages into venv
+For simplicity, I keep my '.venv' folder within the local github repo folder, which I treat as my main project folder.
+
+To activate your venv:
+
+    ```shell
+    #Linux
+    source .venv/bin/activate
+
+    #PC
+    .venv\Scripts\activate.bat
+    ```
+
+### 3 - Run 'venv_setup.py' to load package dependencies ###
+
+
+The 'requirements.txt' file contains all of the package dependencies for the swam_search app.
+
+```shell
+pip3 install -r requirements.txt
+```
+
+Run 'venv_setup.py' to load these packages into your virtual environment
+
+```shell
+python venv_setup.py
+```
+
+### 3 - Load Data into database ###
+
+For this demo, I selected to use postgres.  To load raw .csv data into postgres, we can leverage the 'psychopg2' package (loaded to venv in previous step).
+
+
+
+### 4 - Run 'venv_setup.py' to load packages into venv
 
