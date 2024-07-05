@@ -37,6 +37,8 @@ The 'requirements.txt' file contains all of the package dependencies for the swa
 
 ```shell
 pip3 install -r requirements.txt
+#optional upgrade
+pip3 install --upgrade pip
 ```
 
 Run 'venv_setup.py' to load these packages into your virtual environment

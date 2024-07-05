@@ -1,4 +1,5 @@
 .SWaM_Search.code-workspace
+launch.json
 
 .env
 .venv
