@@ -1,5 +1,5 @@
 *.code-workspace
 launch.json
 
-.env
+*.env
 .venv
