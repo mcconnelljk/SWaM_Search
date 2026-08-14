@@ -1,5 +1,5 @@
-.SWaM_Search.code-workspace
+*.code-workspace
 launch.json
 
-.env
-.venv
+*.env
+*.venv
